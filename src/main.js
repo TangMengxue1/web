@@ -8,6 +8,7 @@ import Layui from '@layui/layui-vue'
 import '@layui/layui-vue/lib/index.css'
 import Header from './components/head.vue'
 import naive from 'naive-ui'
+import AppFooter from "./components/footer.vue"
 
 // 导入axios
 import axios from 'axios'
@@ -21,6 +22,7 @@ axios.defaults.timeout = 5000;
 
 const app=createApp(App)
 app.component('Header',Header)
+app.component('AppFooter',AppFooter)
 app.config.globalProperties.$axios = axios
 app.config.productionTip = false
 app.use(Layui)
@@ -29,4 +31,5 @@ app.use(router)
 app.use(ElementPlus)
 app.use(naive)
 app.mount('#app')
+
 

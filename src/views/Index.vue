@@ -21,15 +21,18 @@
       </el-carousel>
     </div>
 
-    <lay-line border-style="dashed" border-width="5px" theme="rgb(179 104 104)"
-      >『新闻资讯』</lay-line
-    >
+    <lay-line
+      border-style="dashed"
+      border-width="5px"
+      theme="rgb(179 104 104)"
+    ></lay-line>
 
+    <div class="news">非遗影像</div>
     <!-- 新闻页 -->
-    <div class="news">
-      <div class="">
+    <div class="new">
+      <div class="ims">
         <!-- 轮播图 -->
-        <lay-carousel v-model="active1" class="lun">
+        <!-- <lay-carousel v-model="active1" class="lun">
           <lay-carousel-item id="1">
             <img
               src="../assets/img/index/xw4.jpg"
@@ -58,19 +61,32 @@
               style="width: 100%; height: 100%"
             />
           </lay-carousel-item>
-        </lay-carousel>
+        </lay-carousel> -->
+        <n-card
+          :title="item.title"
+          size="huge"
+          v-for="item in Data"
+          :key="item"
+        >
+          <template #cover>
+            <n-image width="100" :src="item.img" />
+          </template>
+          <p>{{ item.time }}</p>
+        </n-card>
       </div>
     </div>
   </div>
 
   <!-- 底部 -->
+  <AppFooter></AppFooter>
 </template>
 <script>
 //引入图片
 import { ref } from "vue";
 import { getLunar } from "chinese-lunar-calendar";
+import axios from "axios";
 export default {
-  components: {},
+
   name: "Index",
   data() {
     return {
@@ -87,16 +103,30 @@ export default {
     };
   },
   mounted() {
-	// 获取农历
-    console.log(this.date)
-    this.getLunarDay = getLunar(this.year, this.month, this.date)
-    console.log(this.getLunarDay)
+    // 获取农历
+    console.log(this.date);
+    this.getLunarDay = getLunar(this.year, this.month, this.date);
+    console.log(this.getLunarDay);
   },
   comments: {},
   setup() {
     //获取农历时间
     const active1 = ref("1");
+    let Data = ref([]);
+    axios
+      .post("http://127.0.0.1:3380/api/imgs/")
+      .then((res) => {
+        //console.log(res.data);
+        Data.value = res.data;
+        console.log(Data.value);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    console.log(Data.value);
     return {
+      Data,
       active1,
     };
   },
@@ -114,11 +144,47 @@ export default {
   height: 100%;
 }
 
-
 .lun {
   height: 500px !important;
   width: 40% !important;
   margin-top: 30px;
   margin-left: 40px;
+}
+
+.news {
+  font-family: cursive;
+  text-align: center;
+  margin-top: 56px;
+  font-size: 38px;
+  margin-bottom: 80px;
+}
+
+.news:before,
+.news:after {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 44px;
+  vertical-align: top;
+  background: url(../assets/img/news/1.png) no-repeat;
+}
+
+.news:before {
+  background-position: left;
+  margin-right: 18px;
+}
+
+.news:after {
+  background-position: right;
+  margin-left: 18px;
+}
+.n-card {
+  max-width: 500px;
+  margin: 10px 10px 10px 10px;
+}
+.ims {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 4%;
 }
 </style>

@@ -81,8 +81,7 @@ export default {
   align-items: center;
 }
 
-.head-top a {
-}
+
 .head-top .infor img {
   height: 40px;
   width: 40px;

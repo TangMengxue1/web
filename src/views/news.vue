@@ -11,77 +11,96 @@
   <div class="news">
     非遗资讯
   </div> 
-  <div class="list">
-    <n-list hoverable clickable>
-    <n-list-item class="item"> 
-      <n-thing title="相见恨晚" content-style="margin-top: 10px;">
+  <div  class="list">
+    <n-list hoverable clickable v-for="item in Data" :key="item">
+    <n-list-item class="item" v-on:click="go(item.url)"> 
+      <div class="li">
+      <n-image class="im"
+    width="350"
+:src= "item.img"  
+  />
+      <n-thing title="" content-style="margin-top: 10px; font-size:16px;">
+       <h2>{{ item.title }}</h2>
         <template #description>
           <n-space size="small" style="margin-top: 4px">
-            <n-tag :bordered="false" type="info" size="small">
-              暑夜
+            <n-tag :bordered="false" type="info" size="large">
+              {{ item.keyword1 }}
             </n-tag>
-            <n-tag :bordered="false" type="info" size="small">
-              晚春
+            <n-tag :bordered="false" type="info" size="large">
+              {{ item.keyword2 }}
             </n-tag>
           </n-space>
         </template>
-        奋勇呀然后休息呀<br>
-        完成你伟大的人生
+        <n-ellipsis :line-clamp="4" style="max-width: 400px">
+    {{ item.con }}
+  </n-ellipsis>
+       
       </n-thing>
-    </n-list-item>
-    <n-list-item class="item">
-      <n-thing title="他在时间门外" content-style="margin-top: 10px;">
-        <template #description>
-          <n-space size="small" style="margin-top: 4px">
-            <n-tag :bordered="false" type="info" size="small">
-              环形公路
-            </n-tag>
-            <n-tag :bordered="false" type="info" size="small">
-              潜水艇司机
-            </n-tag>
-          </n-space>
-        </template>
-        最新的打印机<br>
-        复制着彩色傀儡<br>
-        早上好我的罐头先生<br>
-        让他带你去被工厂敲击
-      </n-thing>
-    </n-list-item>
-     <n-list-item class="item"> 
-      <n-thing title="相见恨晚" content-style="margin-top: 10px;">
-        <template #description>
-          <n-space size="small" style="margin-top: 4px">
-            <n-tag :bordered="false" type="info" size="small">
-              暑夜
-            </n-tag>
-            <n-tag :bordered="false" type="info" size="small">
-              晚春
-            </n-tag>
-          </n-space>
-        </template>
-        奋勇呀然后休息呀<br>
-        完成你伟大的人生
-      </n-thing>
+      </div>
     </n-list-item>
   </n-list>
     </div>  
  <!-- 分页 -->
+
   <el-pagination background layout="prev, pager, next" :total="100" />
   </div>
    
 </div>
+
+<AppFooter></AppFooter>
 </template>
 
+
+// export default {
+//     name:"news",
+//     data() {
+//       return Data
+//   },
+//     methods: {
+//     go(url) {
+//     window.location.href='url';
+//     console.log('1');
+//      }
+//     },
+// }
+
+
 <script>
+import axios from 'axios';
+import { ref } from "vue";
 export default {
-    name:"news",
-    setup() {
-        
-    },
-}
+  name: "news",
+  setup() { 
+   
+    let Data =ref([]);
+          axios.post('http://127.0.0.1:3380/api/news/')
+					.then( res => {
+            //console.log(res.data);
+						Data.value=res.data;
+            console.log(Data.value);
+					})
+					.catch( err => {
+						console.log(err);
+					})
+    
+          console.log(Data.value);
+    return {
+     Data
+    };
+  },
+  methods:{
+    go(url) {
+    window.location.href=url;
+    console.log('1');
+     }
+  }
+    
+};
+
 </script>
 
 <style scoped>
+
 .card-container {
   background: whitesmoke;
   padding: 20px;
@@ -123,8 +142,12 @@ export default {
 }
 
 /* 新闻页 */
-.item {
-  background-color: rgb(207, 207, 207);
+.item{
+  box-shadow: rgba(77, 77, 77, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  margin-top: 20px;
+  background-color: rgb(233, 232, 232);
+  display: flex;
+  
 }
 
 
@@ -143,4 +166,14 @@ export default {
 }
 
 
+.im{
+  display:inline-block;
+  margin-right: 50px;
+}
+
+
+.li{
+  
+  display: flex;
+}
 </style>

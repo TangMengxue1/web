@@ -62,17 +62,7 @@
           <n-number-animation
             ref="numberAnimationInstRef"
             :from="0"
-            :to="12039"
-          />
-        </n-statistic>
-        <n-space vertical> 类别 </n-space>
-      </div>
-      <div>
-        <n-statistic label="" tabular-nums>
-          <n-number-animation
-            ref="numberAnimationInstRef"
-            :from="0"
-            :to="120"
+            :to="5"
           />
         </n-statistic>
         <n-space vertical> 批次 </n-space>
@@ -82,10 +72,20 @@
           <n-number-animation
             ref="numberAnimationInstRef"
             :from="0"
-            :to="12039"
+            :to="10"
           />
         </n-statistic>
         <n-space vertical> 类别 </n-space>
+      </div>
+      <div>
+        <n-statistic label="" tabular-nums>
+          <n-number-animation
+            ref="numberAnimationInstRef"
+            :from="0"
+            :to="1557"
+          />
+        </n-statistic>
+        <n-space vertical> 项目 </n-space>
       </div>
 
       <div>
@@ -93,68 +93,74 @@
           <n-number-animation
             ref="numberAnimationInstRef"
             :from="0"
-            :to="12039"
+            :to="3610"
           />
         </n-statistic>
-        <n-space vertical> 类别 </n-space>
+        <n-space vertical> 子项 </n-space>
       </div>
     </div>
+   
 
 
-<!-- 表格 -->
-<div class="list" >
-  <el-table :data="tableData" stripe style="width: 100% ">
-    <el-table-column prop="id" label="序号" width="280" class="cell"/>
-    <el-table-column prop="name" label="名称" width="280" />
-    <el-table-column prop="time" label="时间" width="280" />
-    <el-table-column prop="type" label="类型" width="280" />
-    <el-table-column prop="unit" label="保护单位" />
-  </el-table>
-</div>
+    <div class="news">名录列表</div>
 
-
-
+    <!-- 表格 -->
+    <div class="list">
+      <el-table  stripe style="width: 100%" :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+        <el-table-column prop="id" label="序号" width="280" class="cell" />
+        <el-table-column prop="name" label="名称" width="280" />
+        <el-table-column prop="time" label="时间" width="280" />
+        <el-table-column prop="type" label="类型" width="280" />
+        <el-table-column prop="unit" label="保护单位" />
+      </el-table>
+    </div>
 
     <!-- 分页 -->
-    <el-pagination background layout="prev, pager, next" :total="100" />
+    <div class="block" style="margin:30px 90px 30px ;">
+            <el-pagination align='center' @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+            :current-page="currentPage" 
+            :page-sizes="[1,5,10,20]" 
+            :page-size="pageSize" 
+            layout="total, sizes, prev, pager, next, jumper" 
+            :total="tableData.length">
+            </el-pagination>
+        </div>
+
   </div>
+
+  <!-- 底部 -->
+  <AppFooter></AppFooter>
 </template>
 
 <script>
 import axios from 'axios';
-import {  reactive,ref } from "vue";
+import { ref } from "vue";
 export default {
   name: "project",
+  data() {
+          return {
+            currentPage: 1, // 当前页码
+            total: 20, // 总条数
+            pageSize: 3 // 每页的数据条数
+          }
+        },
   setup() { 
-    let Data =reactive({
-        pro:[],
-    })
+    let tableData =ref([])
 
     const numberAnimationInstRef = ref(null);
-				async function select(){
-          await axios.post('http://127.0.0.1:3380/api/project/')
+				function select(){
+          axios.post('http://127.0.0.1:3380/api/project/')
 					.then( res => {
             //console.log(res.data);
-						Data.pro=res.data;
-            //console.log(Data.pro);
+						tableData.value=res.data;
+            //console.log(tableData.value);
 					})
 					.catch( err => {
 						console.log(err);
 					})
-          //console.log(Data.pro);
-
-          return Data.pro;
+    
         }
-          // console.log(select());
-          
-          //console.log(Data.pro);
-  
-    var tableData = select();
-    console.log(tableData);
-     
-    // onMounted(() => {
-    //   GetProjectData();
-    // });
+          console.log(select());       
 
     return {
       numberAnimationInstRef,
@@ -162,10 +168,20 @@ export default {
     };
   },
     
+  methods: {
+                //每页条数改变时触发 选择一页显示多少行
+                handleSizeChange(val) {
+                    console.log(`每页 ${val} 条`);
+                    this.currentPage = 1;
+                    this.pageSize = val;
+                },
+                //当前页改变时触发 跳转其他页
+                handleCurrentChange(val) {
+                    console.log(`当前页: ${val}`);
+                    this.currentPage = val;
+                }
+              }
 };
-
-
-
 
 </script>
 
@@ -185,10 +201,15 @@ export default {
 
 .number {
   display: flex;
-  width: 100%;
+  width: 80%;
   flex-wrap: nowrap;
   justify-content: space-around;
   align-items: center;
+  background-color: #a3a3a3;
+  margin-left:10%;
+  font-family: fantasy;
+  font-size: 20px;
+  
 }
 
 .news {
@@ -237,12 +258,10 @@ export default {
   text-indent: 2em;
 }
 
-.list{
-margin-top:70px;
-font-size: 40px;
-width: 90%;
-margin-left: 5%;
+.list {
+  margin-top: 70px;
+  font-size: 40px;
+  width: 90%;
+  margin-left: 5%;
 }
-
-
 </style>
